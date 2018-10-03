@@ -40,7 +40,7 @@ module.exports = {
         return res.view('person/view', { 'person': model });
     
     },
-    // action - delete 
+
     // action - delete 
 delete: async function (req, res) {
 
@@ -58,31 +58,34 @@ delete: async function (req, res) {
 
 },
 
-    // action - update
+   // action - update
 update: async function (req, res) {
 
-    var pid = parseInt(req.params.id) || -1;
+    var message = Person.getInvalidIdMsg(req.params);
+
+    if (message) return res.badRequest(message);
 
     if (req.method == "GET") {
-            
-        var model = await Person.findOne(pid);
 
-        if (model != null)
-            return res.view('person/update', { 'person': model });
-        else
-            return res.send("No such person!");
+        var model = await Person.findOne(req.params.id);
+
+        if (!model) return res.notFound();
+
+        return res.view('person/update', { 'person': model });
 
     } else {
-        
-        var models = await Person.update(pid).set({
+
+        if (typeof req.body.Person === "undefined")
+            return res.badRequest("Form-data not received.");
+
+        var models = await Person.update(req.params.id).set({
             name: req.body.Person.name,
             age: req.body.Person.age
         }).fetch();
 
-        if (models.length > 0)
-            return res.send("Record updated");
-        else
-            return res.send("No such person!");
+        if (models.length == 0) return res.notFound();
+
+        return res.ok("Record updated");
 
     }
 },
