@@ -1,7 +1,5 @@
 <!--paginate.ejs-->
-
 <table class="table">
-  <!-- display all record(same as view) -->
     <% persons.forEach( function(model) { %>
         <tr><td><%= model.name %></td><td><%= model.age %></td></tr>
     <% }); %>
