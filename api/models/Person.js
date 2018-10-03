@@ -17,7 +17,7 @@ name:{
 },
 age:{
  
-  type: "string"
+  type: "number"
 }
 
 
