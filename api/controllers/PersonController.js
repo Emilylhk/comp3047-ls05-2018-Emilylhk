@@ -29,32 +29,35 @@ module.exports = {
     // action - view
     view: async function (req, res) {
 
-        var pid = parseInt(req.params.id) || -1;
-
-        var model = await Person.findOne(pid);
-
-        if (model != null)
-            return res.view('person/view', { 'person': model });
-        else
-            return res.send("No such person");
+        var message = Person.getInvalidIdMsg(req.params);
+    
+        if (message) return res.badRequest(message);
+    
+        var model = await Person.findOne(req.params.id);
+    
+        if (!model) return res.notFound();
+    
+        return res.view('person/view', { 'person': model });
+    
     },
     // action - delete 
-    delete: async function (req, res) {
+    // action - delete 
+delete: async function (req, res) {
 
-        if (req.method == "POST") {
-            const pid = parseInt(req.params.id) || -1;
+    if (req.method == "GET") return res.forbidden();
 
-            var models = await Person.destroy(pid).fetch();
+    var message = Person.getInvalidIdMsg(req.params);
 
-            if (models.length > 0)
-                return res.send("Person Deleted.");
-            else
-                return res.send("Person not found.");
+    if (message) return res.badRequest(message);
 
-        } else {
-            return res.send("Request Forbidden");
-        }
-    },
+    var models = await Person.destroy(req.params.id).fetch();
+
+    if (models.length == 0) return res.notFound();
+
+    return res.ok("Person Deleted.");
+
+},
+
     // action - update
 update: async function (req, res) {
 
