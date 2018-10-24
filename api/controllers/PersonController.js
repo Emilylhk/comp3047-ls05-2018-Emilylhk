@@ -130,5 +130,25 @@ paginate: async function (req, res) {
 
     return res.view('person/paginate', { 'persons': persons, 'count': numOfPage });
 },
+
+populate: async function (req, res) {
+
+    if (!['worksFor'].includes(req.params.association)) return res.notFound();
+
+    const message = sails.getInvalidIdMsg(req.params);
+
+    if (message) return res.badRequest(message);
+
+    var model = await Person.findOne(req.params.id).populate(req.params.association);
+
+    if (!model) return res.notFound();
+
+    return res.json(model);
+
+},
+
+
+
+
 };
 
