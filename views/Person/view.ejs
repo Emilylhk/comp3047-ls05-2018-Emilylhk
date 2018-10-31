@@ -3,7 +3,45 @@
 <%= person.name %>,
     <%= person.age %>,
         <%= person.id %>,
-            <%= person.createdAt %>
-                <form action="/person/delete/<%= person.id %>" method="POST">
-                    <button class="btn btn-primary" type="submit">delete</button>
-                </form>
+            <%= person.createdAt %>,
+                <%= person.birthDate.getDate() %>/
+                    <%= person.birthDate.getMonth() + 1 %>/
+                        <%= person.birthDate.getFullYear() %>
+                            <!-- month need to +1 as start form 0 -->
+                            <!-- <form action="/person/delete/<%= person.id %>" method="POST">
+                    <button class="btn btn-primary" type="submit">Delete</button>
+                </form>    -->
+                            <!-- delete button with delete function, no need the form -->
+                            <button type="button" class="btn btn-danger" onclick="deletePerson('<%= person.id %>')">Delete</button>
+                            <div id="deleteResult"></div>
+                            <script>
+
+                                async function deletePerson(id) {
+                            
+                                    var dr = document.getElementById("deleteResult");
+                            
+                                    var r = confirm("Confirm Delete?");
+                                    if (r == true) {
+                            
+                                        var response = await fetch("/person/" + id, {
+                                            method: "DELETE",
+                                            credentials: 'same-origin',
+                                        });
+                            
+                                        console.log(response);
+                                        
+                                        if (response.status == 200) {
+                                            var data = await response.json();
+                                            dr.innerHTML = data;
+                                            // location.reload(true); 
+                                        } else {
+                                            dr.innerHTML = response.statusText;
+                                        }
+                            
+                                    } else {
+                                        dr.innerHTML = "cancelled";
+                                    }
+                            
+                                };
+                            
+                            </script>

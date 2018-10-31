@@ -44,7 +44,8 @@ module.exports.routes = {
   //  ╠═╣╠═╝║  ║╣ ║║║ ║║╠═╝║ ║║║║║ ║ ╚═╗
   //  ╩ ╩╩  ╩  ╚═╝╝╚╝═╩╝╩  ╚═╝╩╝╚╝ ╩ ╚═╝
   'GET /person/view/:id': 'PersonController.view',
-  'POST /person/delete/:id': 'PersonController.delete',
+  // 'POST /person/delete/:id': 'PersonController.delete',
+  'delete /person/:id': 'PersonController.delete', //new endpoint, new function
 
   'GET /person/update/:id': 'PersonController.update',
   'POST /person/update/:id': 'PersonController.update',
@@ -59,6 +60,8 @@ module.exports.routes = {
   '/user/:id/:association': 'UserController.populate',
   '/user/:id/:association/add/:fk': 'UserController.add',
   '/user/:id/:association/remove/:fk': 'UserController.remove',
+  
+  
 
   //  ╦ ╦╔═╗╔╗ ╦ ╦╔═╗╔═╗╦╔═╔═╗
   //  ║║║║╣ ╠╩╗╠═╣║ ║║ ║╠╩╗╚═╗

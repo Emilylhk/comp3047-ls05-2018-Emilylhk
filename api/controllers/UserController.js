@@ -24,7 +24,7 @@ module.exports = {
         //     res.status(401);
         //     return res.send("Wrong Password");
         // }
-        
+
         const match = await sails.bcrypt.compare(req.body.password, user.password);
 
         if (!match) {
@@ -42,8 +42,12 @@ module.exports = {
             sails.log("Session: " + JSON.stringify(req.session));
 
             // return res.json(req.session);
-
-            return res.ok("Login successfully");
+            if (req.wantsJSON) {
+                return res.redirect('/person/index');
+            } else {
+                return res.ok("Login successfully");
+            }
+            // return res.ok("Login successfully");
 
         });
 
@@ -53,66 +57,67 @@ module.exports = {
         req.session.destroy(function (err) {
 
             return res.ok("Log out successfully");
+
         });
     },
 
-     
+
     populate: async function (req, res) {
 
         if (!['supervises'].includes(req.params.association)) return res.notFound();
-    
+
         const message = sails.getInvalidIdMsg(req.params);
-    
+
         if (message) return res.badRequest(message);
-    
+
         var model = await User.findOne(req.params.id).populate(req.params.association);
-    
+
         if (!model) return res.notFound();
-    
+
         return res.json(model);
-    
+
     },
 
     //link http://localhost:1337/user/(user.id)/supervises/add/(person.id)
     add: async function (req, res) {
 
         if (!['supervises'].includes(req.params.association)) return res.notFound();
-    
+
         const message = sails.getInvalidIdMsg(req.params);
-    
+
         if (message) return res.badRequest(message);
-    
+
         if (!await User.findOne(req.params.id)) return res.notFound();
-    
+
         if (req.params.association == "supervises") {
             if (!await Person.findOne(req.params.fk)) return res.notFound();
         }
-    
+
         await User.addToCollection(req.params.id, req.params.association).members(req.params.fk);
-    
+
         return res.ok('Operation completed.');
-    
+
     },
 
-remove: async function (req, res) {
+    remove: async function (req, res) {
 
-    if (!['supervises'].includes(req.params.association)) return res.notFound();
+        if (!['supervises'].includes(req.params.association)) return res.notFound();
 
-    const message = sails.getInvalidIdMsg(req.params);
+        const message = sails.getInvalidIdMsg(req.params);
 
-    if (message) return res.badRequest(message);
+        if (message) return res.badRequest(message);
 
-    if (!await User.findOne(req.params.id)) return res.notFound();
+        if (!await User.findOne(req.params.id)) return res.notFound();
 
-    if (req.params.association == "supervises") {
-        if (!await Person.findOne(req.params.fk)) return res.notFound();
-    }
+        if (req.params.association == "supervises") {
+            if (!await Person.findOne(req.params.fk)) return res.notFound();
+        }
 
-    await User.removeFromCollection(req.params.id, req.params.association).members(req.params.fk);
+        await User.removeFromCollection(req.params.id, req.params.association).members(req.params.fk);
 
-    return res.ok('Operation completed.');
+        return res.ok('Operation completed.');
 
-},
+    },
 
 };
 

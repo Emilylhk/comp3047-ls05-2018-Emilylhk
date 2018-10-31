@@ -26,6 +26,10 @@ age:{
  
   type: "number"
 },
+birthDate: {
+  type: 'ref', //object reference
+  columnType: 'datetime'
+},
 
 
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗
